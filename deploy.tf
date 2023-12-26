@@ -28,6 +28,16 @@ resource "kubernetes_deployment" "jenkins" {
           port {
             container_port = 8080
          }
+          volume_mount {
+            mount_path = "/var/jenkins_home"
+            name       = "jenkins-storage"
+          }
+       
+        }
+         volume {
+        name = "jenkins-storage"
+
+          empty_dir {}
         }
       }
     }
@@ -50,3 +60,5 @@ resource "kubernetes_service" "jenkins" {
     type = "LoadBalancer"
   }
 }
+
+
