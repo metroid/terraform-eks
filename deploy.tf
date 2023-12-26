@@ -1,3 +1,51 @@
+resource "kubernetes_deployment" "java" {
+  metadata {
+    name = "dev-group-node"
+    labels = {
+      app  = "dev-group-node"
+    }
+  }
+spec {
+    replicas = 2
+selector {
+      match_labels = {
+        app  = "dev-group-node"
+      }
+    }
+template {
+      metadata {
+        labels = {
+          app  = "dev-group-node"
+        }
+      }
+spec {
+        container {
+          image = "749233386023.dkr.ecr.us-east-1.amazonaws.com/java-app:latest"
+          name  = "dev-group-node"
+          port {
+            container_port = 8080
+         }
+        }
+      }
+    }
+  }
+}
+resource "kubernetes_service" "java" {
+  depends_on = [kubernetes_deployment.java]
+  metadata {
+    name = "dev-group-node"
+  }
+  spec {
+    selector = {
+      app = "dev-group-node"
+    }
+    port {
+      port        = 80
+      target_port = 8080
+    }
+type = "LoadBalancer"
+}
+}
 
 ####Jenkins
 
