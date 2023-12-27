@@ -109,4 +109,63 @@ resource "kubernetes_service" "jenkins" {
   }
 }
 
+#sonar qube
 
+resource "kubernetes_deployment" "sonarqube" {
+  metadata {
+    name = "sonarqube"
+    labels = {
+      app = "sonarqube"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "sonarqube"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "sonarqube"
+        }
+      }
+
+      spec {
+        container {
+          image = "sonarqube:latest"
+          name  = "sonarqube"
+
+          port {
+            container_port = 9000
+          }
+        }
+      }
+    }
+  }
+}
+
+
+resource "kubernetes_service" "sonarqube" {
+   depends_on = [kubernetes_deployment.sonarqube]
+  metadata {
+    name = "sonarqube"
+  }
+
+  spec {
+    selector = {
+      app = "sonarqube"
+    }
+
+    port {
+      port        = 9000
+      target_port = 9000
+    }
+
+    type = "LoadBalancer"
+  }
+}
