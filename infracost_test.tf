@@ -32,4 +32,4 @@ resource "aws_lambda_function" "my_hello_world" {
   tags = {
     Environment = "Prod"
   }
-}
+} 
